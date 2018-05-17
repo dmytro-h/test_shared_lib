@@ -8,7 +8,7 @@ node {
             step([$class: 'WsCleanup'])
         }
         // Providing credentials for TimeTrade Docker registry.
-        withDockerRegistry([credentialsId: 'cd78e3ef-ca0f-4eb8-94c6-336ba858e125', url: 'https://docker.ttops.net']) {
+        withDockerRegistry( getDockerRegistryCredentials() ) {
             
             // Defining image from TimeTrade Docker registry for container that we're building Java components with.
             // Selecting 'jenkins' user and mounting SSH keys directory from host under 'jenkins' user's home directory

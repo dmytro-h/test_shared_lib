@@ -5,11 +5,8 @@ node {
         stage('Cleanup Workspace') {
             step([$class: 'WsCleanup'])
         }    
-	withCredentials([[$class          : 'UsernamePasswordMultiBinding',
-                          credentialsId   : 'jenkins-artifactory-access-token',
-                          usernameVariable: 'ARTIFACTORY_USERNAME',
-                          passwordVariable: 'ARTIFACTORY_TOKEN']]) {
-                    // Since 'Jenkinsfile' is in a GitHub repo, repository URL is implicit so can simply call checkout scm.
+	withCredentials( getArtifactoryCredentials() ) {
+          // Since 'Jenkinsfile' is in a GitHub repo, repository URL is implicit so can simply call checkout scm.
           stage('Checkout') {
             checkout scm
           }

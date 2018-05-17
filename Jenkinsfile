@@ -1,5 +1,4 @@
-node {
-    
+node {  
     // 'try-catch' blocks allow sending notifications on build failures.
     try {
         
@@ -7,21 +6,19 @@ node {
         stage('Cleanup Workspace') {
             step([$class: 'WsCleanup'])
         }
-        // Providing credentials for TimeTrade Docker registry.
-        withDockerRegistry( getDockerRegistryCredentials() ) {
-            
-            // Defining image from TimeTrade Docker registry for container that we're building Java components with.
-            // Selecting 'jenkins' user and mounting SSH keys directory from host under 'jenkins' user's home directory
-            // in container to be able create release tag on GitHub via SSH.
-            docker.image('docker.ttops.net/java:8u144-jdk').inside('--user jenkins ' +
-                                                                   '--volume /var/lib/jenkins/.ssh:/var/lib/jenkins/.ssh:ro') {
+
+        
+			withCredentials([[$class          : 'UsernamePasswordMultiBinding',
+                              credentialsId   : 'jenkins-artifactory-access-token',
+                              usernameVariable: 'ARTIFACTORY_USERNAME',
+                              passwordVariable: 'ARTIFACTORY_TOKEN']]) {
+
                     // Since 'Jenkinsfile' is in a GitHub repo, repository URL is implicit so can simply call checkout scm.
                     stage('Checkout') {
-                        checkout scm
-                    }  
-            }
+                      checkout scm
+                    }
+				}
         }        
-    }
     catch(e) {
         throw e
     }
